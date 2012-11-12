@@ -1,0 +1,152 @@
+{% extends "crime/base.html" %}
+
+{% block main %}
+    <div class="row">
+        <div class="twelve columns">
+            <h1 class="center"> Hello! </h1>
+            <p class="center"> (If you haven't clicked anything, this displays the 'arson' data by default.) </p>
+            {% comment %}
+            <ul class="inline-list">
+                {% for item in crimeTypes %}
+                    <li>
+                        <a href="/crime/type/{{ forloop.counter }}"> {{ item|truncatechars:15 }} </a>
+                    </li>
+                {% endfor %}
+            </ul>
+            {% endcomment %}
+            <form>
+                {% for item in crimeTypes %}
+                    <label class="crimeSelect" id="{{ item }}"><input type="radio" name="dataset" value = "{{ item }}" style="display:none;"> {{ item }} </input></label>
+                {% endfor %}
+            </form>
+        </div> <!-- /.twelve.columns -->
+    </div> <!-- /.row -->
+    {# {% if crimes %} #}
+    
+    <div class="row">
+        <div class="twelve columns">
+            {% comment %}
+            <h3 class="center"> 
+            There are {{ crimes|length }} 
+            total crimes of type {{ crimeTitle }} 
+            </h3>
+            {% endcomment %}
+            <svg class="chart"></svg>
+            
+        </div> <!-- /.twelve.columns -->
+    </div> <!-- /.row -->
+    {# {% endif %} #}
+    
+    <script>
+        //var vals = [];
+        //var titles = [];
+        var dataset;
+        var width = 700;
+        var height = 350;
+        var radius = Math.min(width, height)/2;
+        var color = d3.scale.category20();
+        
+        var arc = d3.svg.arc()
+            .outerRadius(radius - 50)
+            .innerRadius(radius - 120);
+        
+        var pie = d3.layout.pie()
+            .sort(null);
+        
+        /*
+        var chart = d3.select(".chart")
+                .attr("width", chartWidth)
+                .attr("height", chartHeight)
+            .append("g")
+                .attr("transform", "translate(" + chartWidth/2 + "," + chartHeight/2 + ")");
+        */
+        var svg = d3.select(".chart")
+                .attr("width", width)
+                .attr("height", height)
+            .append("g")
+                .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+        
+        //d3.json("/crime/type/{{ crimeNum }}.json", function(err, json){
+        d3.json("/crime/all.json", function(err, json){
+            dataset = json;
+            
+            var path = svg.selectAll("path")
+                    .data(pie(dataset.ARSON.counts))
+                .enter().append("path")
+                    .attr("class", "arc")
+                    .attr("fill", function(d, i) { return color(i); })
+                    .attr("d", arc)
+                    .each(function(d) { this._current = d; }); // store the initial values
+            
+            d3.selectAll("input").on("change", change);
+            
+            function change() {
+                path = path.data(pie(dataset[this.value].counts)); // update the data
+                path.transition().duration(750).attrTween("d", arcTween); // redraw the arcs
+            }
+            
+            // Store the displayed angles in _current.
+            // Then, interpolate from _current to the new angles.
+            // During the transition, _current is updated in-place by d3.interpolate.
+            function arcTween(a) {
+                var i = d3.interpolate(this._current, a);
+                this._current = i(0);
+                return function(t) {
+                    return arc(i(t));
+                };
+            }
+            
+            /*
+            for (var key in data)
+            {
+                vals.push(data[key]);
+                titles.push(key);
+            }
+            
+            g = chart.selectAll(".arc")
+                .data(pie(dataset.ARSON.counts))
+                .enter().append("g")
+                .attr("class", "arc");
+                
+            g.append("path")
+                .attr("d", arc)
+                .style("fill", function (d, i) { return color(i); });
+            
+            g.append("text")
+                .attr("transform", function(d) { return "translate(" + arc.centroid(d) + ")"; })
+                .attr("dy", ".35em")
+                .style("text-anchor", "middle")
+                .text(function(d, i) { return dataset.ARSON.counts[i]; });
+            */
+            
+            var legend = svg.selectAll(".legend")
+              .data(color.domain().slice().reverse())
+            .enter().append("g")
+              .attr("class", "legend")
+              .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
+        
+            legend.append("rect")
+                .attr("x", width/2 - 95)
+                .attr("width", 15)
+                .attr("height", 15)
+                .style("fill", color);
+        
+            legend.append("text")
+                .attr("x", width/2 - 105)
+                .attr("y", 9)
+                .attr("dy", ".35em")
+                .style("text-anchor", "end")
+                .text(function(d, i) { return dataset.ARSON.zips[i]; });
+            
+            /*
+            legend.append("text")
+                .attr("x", width/2 - 65)
+                .attr("y", 9)
+                .attr("dy", ".35em")
+                .style("text-anchor", "end")
+                .text(function(d, i) { return dataset.ARSON.counts[i]; });
+            */
+        })
+    </script>
+    
+{% endblock %}

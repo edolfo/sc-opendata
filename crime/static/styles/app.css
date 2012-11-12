@@ -1,0 +1,57 @@
+/* Artfully masterminded by ZURB  */
+
+/* -------------------------------------------------- 
+   Table of Contents
+-----------------------------------------------------
+:: Shared Styles
+:: Page Name 1
+:: Page Name 2
+*/
+
+
+/* -----------------------------------------
+   Shared Styles
+----------------------------------------- */
+.chart{
+    font: 10px sans-serif;
+    //background-color: steelblue;
+    text-align: right;
+    padding: 3px;
+    margin: 1px;
+    color: white;
+    //height: 450px;
+    //shape-rendering:crispEdges;
+}
+
+.chart rect{
+    stroke: white;
+    fill: steelblue;
+}
+
+label.crimeSelect{
+    font-size:10px; 
+    display:inline;
+    margin: 5px;
+    background-color:steelblue;
+    border-radius:10px;
+    padding:5px;
+    line-height:28px;
+    color:white;
+}
+
+.center{
+    text-align:center;
+}
+
+/* -----------------------------------------
+   Page Name 1
+----------------------------------------- */
+
+
+
+
+/* -----------------------------------------
+   Page Name 2
+----------------------------------------- */
+
+

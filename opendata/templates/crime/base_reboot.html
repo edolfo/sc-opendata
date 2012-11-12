@@ -1,0 +1,14 @@
+{% extends "crime/base.html" %}
+
+{% block main %}
+    <div class="row">
+        <div class="twelve columns">
+            <h1> DB Reboot </h1>
+            <form action="/crime/reboot/handler/" method="post">
+                {% csrf_token %}
+                <label> Input passphrase: </label>
+                <input type="password" class="twelve" name="passphrase" />
+            </form>
+        </div>
+    </div>
+{% endblock %}
