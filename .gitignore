@@ -25,3 +25,13 @@ pip-log.txt
 
 #Mr Developer
 .mr.developer.cfg
+
+#DB
+data
+
+# opendata
+opendata/settings.py
+polls/
+crime/pdexport.xml
+crime/tests.py
+crime/xmlToDB.py
